@@ -11,7 +11,4 @@ app.use((0, cookie_parser_1.default)());
 app.get("/", (req, res) => {
     res.send("iam home");
 });
-app.listen(5000, () => {
-    console.log("server is listening");
-});
 exports.default = app;
