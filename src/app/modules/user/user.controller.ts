@@ -2,7 +2,7 @@ import catchAsync from "../../../utils/catchAsync";
 import sendResponse from "../../../utils/sendResponse";
 import { UserServices } from "./user.services";
 
-const createUser = catchAsync(async (req, res, next) => {
+const createUser = catchAsync(async (req, res) => {
   const userInfo = req.body;
   const result = await UserServices.createUserIntoDb(userInfo);
 
