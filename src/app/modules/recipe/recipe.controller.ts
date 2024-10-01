@@ -47,16 +47,17 @@ const deleteRecipe = catchAsync(async (req, res) => {
   });
 });
 
+// =============comment api service ==============
+
 const createComment = catchAsync(async (req, res) => {
   const userId = req.user.userId;
-  console.log(userId, "iamuserid");
 
   const recipeId = req.params.recipeId;
 
   const payloadComment = {
     userId,
     recipeId,
-    comment: req.body,
+    content: req.body.content,
   };
 
   const result = await RecipeServices.createCommentForRecipe(payloadComment);
@@ -80,6 +81,19 @@ const getAllCommentForSpecificRecipe = catchAsync(async (req, res) => {
   });
 });
 
+const deleteComment = catchAsync(async (req, res) => {
+  const userId = req.user.userId as string;
+
+  const result = await RecipeServices.deleteCommentFromDB(userId);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "Comment deleted succesfull",
+    data: result,
+  });
+});
+
 // const updateUser = catchAsync(async (req, res) => {
 //   const paylod = req.body;
 
@@ -99,4 +113,5 @@ export const RecipeController = {
   deleteRecipe,
   createComment,
   getAllCommentForSpecificRecipe,
+  deleteComment,
 };

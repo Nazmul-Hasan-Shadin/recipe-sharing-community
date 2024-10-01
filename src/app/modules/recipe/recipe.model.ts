@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 import { TRecipeModel, TComment, TRecipe } from "./recipe.interface";
 
-const recipeSchema = new Schema<TRecipe,TRecipeModel>(
+const recipeSchema = new Schema<TRecipe, TRecipeModel>(
   {
     title: {
       type: String,
@@ -53,8 +53,6 @@ const recipeSchema = new Schema<TRecipe,TRecipeModel>(
   }
 );
 
-
-
 // comment model
 const commentSchema = new Schema<TComment>(
   {
@@ -70,6 +68,7 @@ const commentSchema = new Schema<TComment>(
     },
     content: {
       type: String,
+
       required: true,
     },
     createdAt: {

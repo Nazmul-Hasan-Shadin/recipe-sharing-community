@@ -1,6 +1,6 @@
 import { QueryBuilder } from "../../builder/QueryBuilder";
 import { recipeSearchableField } from "./recipe.const";
-import {  TRecipe } from "./recipe.interface";
+import { TRecipe } from "./recipe.interface";
 import { Comment, Recipe } from "./recipe.model";
 
 const createRecipeIntoDb = async (recipeInfo: TRecipe) => {
@@ -42,8 +42,9 @@ const deleteRecipeFromDB = async (recipeId: string) => {
 const createCommentForRecipe = async (comments: {
   userId: string;
   recipeId: string;
-  comment: string;
+  content: string;
 }) => {
+  console.log(comments, "iam comments");
   const result = await Comment.create(comments);
 
   return result;
@@ -57,6 +58,12 @@ const getAllCommentForSpecificRecipe = async (recipeId: string) => {
   return result;
 };
 
+const deleteCommentFromDB = async (recipeId: string) => {
+  const result = await Comment.deleteOne({ recipeId: recipeId });
+
+  return result;
+};
+
 export const RecipeServices = {
   createRecipeIntoDb,
   getAllRecipeFromDb,
@@ -64,4 +71,5 @@ export const RecipeServices = {
   deleteRecipeFromDB,
   createCommentForRecipe,
   getAllCommentForSpecificRecipe,
+  deleteCommentFromDB,
 };
