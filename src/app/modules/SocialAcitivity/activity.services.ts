@@ -1,4 +1,6 @@
+import { Types } from "mongoose";
 import { AppError } from "../../errors/AppError";
+import { Recipe } from "../Recipe/recipe.model";
 import { User } from "../user/user.model";
 
 const followUserIntoDb = async (userInfo: { id: string; targetId: string }) => {
@@ -26,6 +28,20 @@ const followUserIntoDb = async (userInfo: { id: string; targetId: string }) => {
   await targetUser.save();
 };
 
+export const upvoteRecipeIntoDB = async (recipeId: string, userId: string) => {
+  const recipe = await Recipe.findById(recipeId);
+
+    if (!recipe) {
+       throw new AppError(404,'recipe id is not found')
+    }
+    const userObjectId = new Types.ObjectId(userId);
+    const isAlreadyUpvoted = recipe.upvotes.some((id: Types.ObjectId) => id.equals(userObjectId));
+    
+
+  return recipe;
+};
+
 export const ActivityServices = {
   followUserIntoDb,
+  upvoteRecipeIntoDB,
 };

@@ -1,0 +1,1 @@
+export const recipeSearchableField:string[]=['instructions','title']
