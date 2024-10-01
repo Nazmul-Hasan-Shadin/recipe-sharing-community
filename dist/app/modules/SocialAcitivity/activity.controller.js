@@ -12,29 +12,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const http_1 = require("http");
-const mongoose_1 = __importDefault(require("mongoose"));
-const config_1 = __importDefault(require("./app/config"));
-const app_1 = __importDefault(require("./app"));
-let server;
-function main() {
-    return __awaiter(this, void 0, void 0, function* () {
-        yield mongoose_1.default.connect(config_1.default.db_uri, {
-            dbName: "recipe-community",
-        });
-        console.log("Db is connected");
-        server = app_1.default.listen(config_1.default.port, () => {
-            console.log("server is running");
-        });
+exports.ActivityController = void 0;
+const catchAsync_1 = __importDefault(require("../../../utils/catchAsync"));
+const sendResponse_1 = __importDefault(require("../../../utils/sendResponse"));
+const activity_services_1 = require("./activity.services");
+const followUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const userInfo = {
+        id: req.user.userId,
+        targetId: req.params.id,
+    };
+    const result = yield activity_services_1.ActivityServices.followUserIntoDb(userInfo);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: 200,
+        message: "Followed",
+        data: result,
     });
-}
-main();
-process.on('unhandledRejection', () => {
-    console.log(`unhandle Rejection is detected, shutting down the server`);
-    if (http_1.Server) {
-        server.close(() => {
-            process.exit(1);
-        });
-    }
-    process.exit(1);
-});
+}));
+exports.ActivityController = {
+    followUser,
+};

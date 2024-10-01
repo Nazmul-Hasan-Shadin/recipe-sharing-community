@@ -1,6 +1,6 @@
 import { QueryBuilder } from "../../builder/QueryBuilder";
 import { recipeSearchableField } from "./recipe.const";
-import { TComment, TRecipe } from "./recipe.interface";
+import {  TRecipe } from "./recipe.interface";
 import { Comment, Recipe } from "./recipe.model";
 
 const createRecipeIntoDb = async (recipeInfo: TRecipe) => {

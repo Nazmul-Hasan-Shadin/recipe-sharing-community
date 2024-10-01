@@ -18,6 +18,13 @@ const followUser = catchAsync(async (req, res) => {
   });
 });
 
+export const upvoteRecipeController = catchAsync(async (req, res) => {
+  const { recipeId } = req.params;
+  const userId = req.user.userId;
+
+  const upvoteCount = await ActivityServices.upvoteRecipe(recipeId, userId);
+});
 export const ActivityController = {
   followUser,
+  upvoteRecipeController,
 };

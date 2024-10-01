@@ -1,5 +1,4 @@
 import { Schema, model } from "mongoose";
-import { boolean } from "zod";
 import { TRecipeModel, TComment, TRecipe } from "./recipe.interface";
 
 const recipeSchema = new Schema<TRecipe,TRecipeModel>(

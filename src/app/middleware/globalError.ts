@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import { TErrorSource } from "../interface/error";
 import mongooseErrorHandler from "../errors/mongooseErrorHandler";
 
+/* eslint-disable  no-explicit-any */
 const globalErrorHandler = (
   err: any,
   req: Request,

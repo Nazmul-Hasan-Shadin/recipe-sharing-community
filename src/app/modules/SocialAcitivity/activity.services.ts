@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 import { AppError } from "../../errors/AppError";
-import { Recipe } from "../Recipe/recipe.model";
+import { Recipe } from "../recipe/recipe.model";
 import { User } from "../user/user.model";
 
 const followUserIntoDb = async (userInfo: { id: string; targetId: string }) => {
@@ -28,20 +28,53 @@ const followUserIntoDb = async (userInfo: { id: string; targetId: string }) => {
   await targetUser.save();
 };
 
-export const upvoteRecipeIntoDB = async (recipeId: string, userId: string) => {
-  const recipe = await Recipe.findById(recipeId);
+const upvoteRecipe = async (recipeId: string, userId: string) => {
+  const recipe = await Recipe.findById(recipeId).populate("upvotes");
+  if (!recipe) {
+    throw new Error("Recipe not found");
+  }
 
-    if (!recipe) {
-       throw new AppError(404,'recipe id is not found')
-    }
-    const userObjectId = new Types.ObjectId(userId);
-    const isAlreadyUpvoted = recipe.upvotes.some((id: Types.ObjectId) => id.equals(userObjectId));
-    
+  const modiFiedId = new Types.ObjectId(userId);
 
-  return recipe;
+  // // Check if the user has already upvoted
+  const hasUpvoted = recipe.upvotes.some((upvote) => upvote.equals(modiFiedId));
+
+  console.log(hasUpvoted);
+
+  if (hasUpvoted) {
+    // Remove the upvote (user is toggling the upvote off)
+    await Recipe.findByIdAndUpdate(
+      recipeId,
+      { $pull: { upvotes: userId } },
+      { new: true }
+    );
+  } else {
+    await Recipe.findByIdAndUpdate(
+      recipeId,
+      { $addToSet: { upvotes: userId }, $pull: { downvotes: userId } }, // Remove any downvote by the user
+      { new: true }
+    );
+  }
+
+
+  const result = await Recipe.aggregate([
+    { $match: { _id: recipeId } }, // Match the recipe by its ID
+    {
+      $project: {
+        _id: 1,
+        upvoteCount: { $size: "$upvotes" }, // Get the count of upvotes
+        downvoteCount: { $size: "$downvotes" }, 
+      },
+    },
+  ]);
+
+  console.log(result);
+
+  // Return the updated upvote count
+  return result.length > 0 ? result[0].upvoteCount : 0;
 };
 
 export const ActivityServices = {
   followUserIntoDb,
-  upvoteRecipeIntoDB,
+  upvoteRecipe,
 };
