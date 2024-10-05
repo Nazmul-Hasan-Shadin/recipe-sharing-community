@@ -3,6 +3,7 @@ import { User } from "./user.model";
 
 const createUserIntoDb = async (userInfo: TUser) => {
   const result = await User.create(userInfo);
+
   return result;
 };
 
@@ -37,7 +38,13 @@ const updateProfileIntoDb = async (
   return result;
 };
 
+const getSingleUserFromDb = async (userId: string) => {
+  const result = await User.findById(userId);
+
+  return result;
+};
 export const UserServices = {
   createUserIntoDb,
   updateProfileIntoDb,
+  getSingleUserFromDb,
 };

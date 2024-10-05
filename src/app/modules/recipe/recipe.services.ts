@@ -3,7 +3,8 @@ import { recipeSearchableField } from "./recipe.const";
 import { TRecipe } from "./recipe.interface";
 import { Comment, Recipe } from "./recipe.model";
 
-const createRecipeIntoDb = async (recipeInfo: TRecipe) => {
+const createRecipeIntoDb = async (recipeInfo: TRecipe, userName: string) => {
+  recipeInfo.name = userName;
   const result = await Recipe.create(recipeInfo);
 
   return result;
@@ -21,6 +22,8 @@ const getAllRecipeFromDb = async (query: Record<string, unknown>) => {
 };
 
 const getSingleRecipeFromDb = async (recipeId: string) => {
+  console.log(recipeId, "insride reecipve services");
+
   const result = await Recipe.findById(recipeId);
 
   return result;
@@ -53,7 +56,9 @@ const createCommentForRecipe = async (comments: {
 const getAllCommentForSpecificRecipe = async (recipeId: string) => {
   const result = await Comment.find({
     recipeId,
-  });
+  }).populate("userId");
+
+  console.log(result, "iam result");
 
   return result;
 };

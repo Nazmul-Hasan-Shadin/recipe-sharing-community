@@ -4,7 +4,8 @@ import { RecipeServices } from "./recipe.services";
 
 const createRecipe = catchAsync(async (req, res) => {
   const userInfo = req.body;
-  const result = await RecipeServices.createRecipeIntoDb(userInfo);
+  const userName = req.user.username;
+  const result = await RecipeServices.createRecipeIntoDb(userInfo, userName);
 
   sendResponse(res, {
     success: true,
@@ -26,7 +27,9 @@ const getAllRecipe = catchAsync(async (req, res) => {
 });
 
 const getSingleRecipe = catchAsync(async (req, res) => {
-  const result = await RecipeServices.getSingleRecipeFromDb(req.params.id);
+  const result = await RecipeServices.getSingleRecipeFromDb(
+    req.params.recipeId
+  );
 
   sendResponse(res, {
     success: true,

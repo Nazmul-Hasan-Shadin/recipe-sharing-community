@@ -28,53 +28,77 @@ const followUserIntoDb = async (userInfo: { id: string; targetId: string }) => {
   await targetUser.save();
 };
 
-const upvoteRecipe = async (recipeId: string, userId: string) => {
-  const recipe = await Recipe.findById(recipeId).populate("upvotes");
+const toggleVoteRecipe = async (
+  recipeId: string,
+  userId: string,
+  voteType: "upvote" | "downvote"
+) => {
+  const recipe = await Recipe.findById(recipeId).populate("upvotes downvotes");
   if (!recipe) {
     throw new Error("Recipe not found");
   }
 
   const modiFiedId = new Types.ObjectId(userId);
 
-  // // Check if the user has already upvoted
-  const hasUpvoted = recipe.upvotes.some((upvote) => upvote.equals(modiFiedId));
-
-  console.log(hasUpvoted);
-
-  if (hasUpvoted) {
-    // Remove the upvote (user is toggling the upvote off)
-    await Recipe.findByIdAndUpdate(
-      recipeId,
-      { $pull: { upvotes: userId } },
-      { new: true }
+  // Handle upvote logic
+  if (voteType === "upvote") {
+    const hasUpvoted = recipe.upvotes.some((upvote) =>
+      upvote.equals(modiFiedId)
     );
-  } else {
-    await Recipe.findByIdAndUpdate(
-      recipeId,
-      { $addToSet: { upvotes: userId }, $pull: { downvotes: userId } }, // Remove any downvote by the user
-      { new: true }
-    );
+    if (hasUpvoted) {
+      // Remove the upvote
+      await Recipe.findByIdAndUpdate(
+        recipeId,
+        { $pull: { upvotes: userId } },
+        { new: true }
+      );
+    } else {
+      // Add upvote and remove any downvote
+      await Recipe.findByIdAndUpdate(
+        recipeId,
+        { $addToSet: { upvotes: userId }, $pull: { downvotes: userId } },
+        { new: true }
+      );
+    }
   }
 
+  // Handle downvote logic
+  if (voteType === "downvote") {
+    const hasDownvoted = recipe.downvotes.some((downvote) =>
+      downvote.equals(modiFiedId)
+    );
+    if (hasDownvoted) {
+      // Remove the downvote
+      await Recipe.findByIdAndUpdate(
+        recipeId,
+        { $pull: { downvotes: userId } },
+        { new: true }
+      );
+    } else {
+      // Add downvote and remove any upvote
+      await Recipe.findByIdAndUpdate(
+        recipeId,
+        { $addToSet: { downvotes: userId }, $pull: { upvotes: userId } },
+        { new: true }
+      );
+    }
+  }
 
+  // Return updated upvote/downvote count
   const result = await Recipe.aggregate([
-    { $match: { _id: recipeId } }, // Match the recipe by its ID
+    { $match: { _id: recipe._id } },
     {
       $project: {
-        _id: 1,
-        upvoteCount: { $size: "$upvotes" }, // Get the count of upvotes
-        downvoteCount: { $size: "$downvotes" }, 
+        upvoteCount: { $size: "$upvotes" },
+        downvoteCount: { $size: "$downvotes" },
       },
     },
   ]);
 
-  console.log(result);
-
-  // Return the updated upvote count
-  return result.length > 0 ? result[0].upvoteCount : 0;
+  return result.length > 0 ? result[0] : { upvoteCount: 0, downvoteCount: 0 };
 };
 
 export const ActivityServices = {
   followUserIntoDb,
-  upvoteRecipe,
+  toggleVoteRecipe,
 };

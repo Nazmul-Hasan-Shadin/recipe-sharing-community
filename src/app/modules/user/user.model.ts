@@ -39,8 +39,9 @@ const userSchema = new Schema<TUser, UserModel>(
     following: [{ type: Schema.Types.ObjectId, ref: "User" }],
     status: {
       type: String,
-      required: true,
+
       enum: ["active", "block"],
+      default: "active",
     },
     passwordChangeAt: {
       type: Date,

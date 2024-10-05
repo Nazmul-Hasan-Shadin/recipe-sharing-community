@@ -15,11 +15,7 @@ export interface TRating {
 export interface TComment {
   recipeId: Types.ObjectId; // Reference to the recipe
   userId: Types.ObjectId; // Reference to the user who made the comment
-  content: {
-    userId: string;
-    recipeId: string;
-    content: string;
-  };
+  content: string;
   createdAt: Date; // Timestamp for when the comment was created
 }
 
@@ -33,6 +29,7 @@ export interface TRecipe {
   ratings?: TRating[]; // Array of rating objects
   upvotes: Types.ObjectId;
   isPremium: boolean;
+  name: string;
   downvotes: Types.ObjectId;
   isDeleted: boolean;
 }

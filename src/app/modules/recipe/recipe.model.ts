@@ -25,6 +25,9 @@ const recipeSchema = new Schema<TRecipe, TRecipeModel>(
     image: {
       type: String, // URL or local file path
     },
+    name: {
+      type: String,
+    },
     author: {
       type: Schema.Types.ObjectId,
       ref: "User",
@@ -58,14 +61,15 @@ const commentSchema = new Schema<TComment>(
   {
     recipeId: {
       type: Schema.ObjectId,
-      ref: "Recipe", // Reference to the Recipe model
+      ref: "Recipe",
       required: true,
     },
     userId: {
       type: Schema.Types.ObjectId,
-      ref: "User", // Reference to the User model
+      ref: "User",
       required: true,
     },
+
     content: {
       type: String,
 

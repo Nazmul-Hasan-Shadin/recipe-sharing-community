@@ -1,3 +1,4 @@
+import { sendEmail } from "../../../utils/SendMail";
 import config from "../../config";
 import { AppError } from "../../errors/AppError";
 import { User } from "../user/user.model";
@@ -91,7 +92,86 @@ const changePassword = async (
   return result;
 };
 
+const forgetPassword = async (id: string) => {
+  const user = await User.isUserExist(id);
+
+  const userStatus = user?.status;
+
+  if (!user) {
+    throw new AppError(404, "This user is not found ");
+  }
+
+  if (userStatus === "block") {
+    throw new AppError(400, "This user is blocked");
+  }
+  const jwtPayload = {
+    email: user.email,
+    username: user.username,
+    userId: user._id,
+    role: user.role,
+  };
+
+  const resetToken = jwt.sign(
+    jwtPayload,
+    config.jwt_access_token_secret as string,
+    {
+      expiresIn: "6d",
+    }
+  );
+
+  const resetUILink = `${config.reset_ui_pass_link}?id=${user._id}&token=${resetToken}`;
+  console.log(resetUILink);
+
+  sendEmail(user?.email, resetUILink);
+};
+
+const resetPasswordIntoDb = async (
+  payload: { id: string; newPassword: string },
+  token: string
+) => {
+  console.log(payload.id);
+
+  const user = await User.isUserExist(payload.id);
+  console.log(user);
+
+  if (!user) {
+    throw new AppError(404, "This user is not found ");
+  }
+
+
+
+
+  const decoded = jwt.verify(
+    token,
+    config.jwt_access_token_secret as string
+  ) as JwtPayload;
+  console.log("decoded id", decoded.userId);
+
+  if (payload.id !== decoded.userId) {
+    throw new AppError(401, "Your are forbidden");
+  }
+
+  const newHashedPassword = await bcrypt.hash(
+    payload.newPassword,
+    Number(config.bcrypt_salt)
+  );
+  const result = await User.findOneAndUpdate(
+    {
+      id: decoded.userId,
+      role: decoded.role,
+    },
+    {
+      password: newHashedPassword,
+
+      passwordChangeAt: new Date(),
+    }
+  );
+};
+
 export const AuthServices = {
   loginUserIntoDb,
   changePassword,
+  forgetPassword,
+  resetPasswordIntoDb
+  
 };

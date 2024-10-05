@@ -19,10 +19,24 @@ const followUser = catchAsync(async (req, res) => {
 });
 
 export const upvoteRecipeController = catchAsync(async (req, res) => {
+  console.log("iam hit");
+
+  const { recipeId: optionalid, type } = req.body;
+
   const { recipeId } = req.params;
   const userId = req.user.userId;
 
-  const upvoteCount = await ActivityServices.upvoteRecipe(recipeId, userId);
+  const upvoteCount = await ActivityServices.toggleVoteRecipe(
+    recipeId,
+    userId,
+    type
+  );
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "upvote succesful",
+    data: upvoteCount,
+  });
 });
 export const ActivityController = {
   followUser,
