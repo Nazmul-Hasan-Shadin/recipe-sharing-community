@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.post(
   "/register",
-  multerUpload.single("image"),
+  multerUpload.single("profilePicture"),
   UserController.createUser
 );
 router.post("/update-profile", auth("user"), UserController.updateUser);

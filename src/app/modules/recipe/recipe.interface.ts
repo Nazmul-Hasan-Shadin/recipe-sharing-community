@@ -21,17 +21,17 @@ export interface TComment {
 
 export interface TRecipe {
   title: string;
-  ingredients: TIngredient[]; // Array of ingredient objects
+  ingredients?: TIngredient[]; // Array of ingredient objects
   instructions: string;
-  cookingTime: number; // Time in minutes
-  image?: string; // Optional image URL
-  author: Types.ObjectId; // User ID as string
+  cookingTime?: number; // Time in minutes
+  image?: string[]; // Optional image URL
+  author?: Types.ObjectId; // User ID as string
   ratings?: TRating[]; // Array of rating objects
-  upvotes: Types.ObjectId;
-  isPremium: boolean;
-  name: string;
-  downvotes: Types.ObjectId;
-  isDeleted: boolean;
+  upvotes?: Types.ObjectId;
+  isPremium?: boolean;
+  name?: string;
+  downvotes?: Types.ObjectId;
+  isDeleted?: boolean;
 }
 
 export interface TRecipeModel extends Model<TRecipe> {

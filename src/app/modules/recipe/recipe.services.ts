@@ -3,15 +3,14 @@ import { recipeSearchableField } from "./recipe.const";
 import { TRecipe } from "./recipe.interface";
 import { Comment, Recipe } from "./recipe.model";
 
-const createRecipeIntoDb = async (recipeInfo: TRecipe, userName: string) => {
-  recipeInfo.name = userName;
+const createRecipeIntoDb = async (recipeInfo: TRecipe) => {
   const result = await Recipe.create(recipeInfo);
 
   return result;
 };
 
 const getAllRecipeFromDb = async (query: Record<string, unknown>) => {
-  const recipeQuery = new QueryBuilder(Recipe.find(), query)
+  const recipeQuery = new QueryBuilder(Recipe.find().populate("author"), query)
     .search(recipeSearchableField)
     .filter()
     .sort()
@@ -21,11 +20,25 @@ const getAllRecipeFromDb = async (query: Record<string, unknown>) => {
   return result;
 };
 
+const myRecipeFromDb = async (userId: string) => {
+  const result = await Recipe.find({ author: userId });
+
+  return result;
+};
+
 const getSingleRecipeFromDb = async (recipeId: string) => {
   console.log(recipeId, "insride reecipve services");
 
   const result = await Recipe.findById(recipeId);
 
+  return result;
+};
+
+const updateRecipeInDb = async (recipeId: string, recipeInfo: TRecipe) => {
+  const result = await Recipe.findByIdAndUpdate(recipeId, recipeInfo, {
+    new: true,
+    runValidators: true,
+  });
   return result;
 };
 
@@ -77,4 +90,6 @@ export const RecipeServices = {
   createCommentForRecipe,
   getAllCommentForSpecificRecipe,
   deleteCommentFromDB,
+  myRecipeFromDb,
+  updateRecipeInDb,
 };

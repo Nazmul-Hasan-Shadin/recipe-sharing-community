@@ -27,13 +27,14 @@ const loginUserIntoDb = async (userInfo: TLoginUser) => {
     username: user.username,
     userId: user._id,
     role: user.role,
+    profilePicture: user?.profilePicture,
   };
 
   const accessToken = jwt.sign(
     jwtPayload,
     config.jwt_access_token_secret as string,
     {
-      expiresIn: "4h",
+      expiresIn: "4d",
     }
   );
 
@@ -138,9 +139,6 @@ const resetPasswordIntoDb = async (
     throw new AppError(404, "This user is not found ");
   }
 
-
-
-
   const decoded = jwt.verify(
     token,
     config.jwt_access_token_secret as string
@@ -172,6 +170,5 @@ export const AuthServices = {
   loginUserIntoDb,
   changePassword,
   forgetPassword,
-  resetPasswordIntoDb
-  
+  resetPasswordIntoDb,
 };

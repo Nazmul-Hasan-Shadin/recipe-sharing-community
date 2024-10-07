@@ -3,14 +3,41 @@ import sendResponse from "../../../utils/sendResponse";
 import { RecipeServices } from "./recipe.services";
 
 const createRecipe = catchAsync(async (req, res) => {
-  const userInfo = req.body;
-  const userName = req.user.username;
-  const result = await RecipeServices.createRecipeIntoDb(userInfo, userName);
+  const allCookingdata = JSON.parse(req.body.data);
+  const image = req.files!.map((file) => file.path);
+
+  const userInformation = {
+    name: req.user.username,
+    author: req.user.userId,
+    profilePicture: req.user?.profilePicture,
+  };
+
+  console.log(req.user, "iam user");
+
+  const recipeData = {
+    ...allCookingdata,
+    ...userInformation,
+
+    image,
+  };
+
+  const result = await RecipeServices.createRecipeIntoDb(recipeData);
 
   sendResponse(res, {
     success: true,
     statusCode: 200,
     message: "Recipe created succesfull",
+    data: result,
+  });
+});
+
+const getMyProfile = catchAsync(async (req, res) => {
+  const result = await RecipeServices.myRecipeFromDb(req.user.userId);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "Recipe are retrived succesfull",
     data: result,
   });
 });
@@ -39,6 +66,26 @@ const getSingleRecipe = catchAsync(async (req, res) => {
   });
 });
 
+const updateRecipe = catchAsync(async (req, res) => {
+  console.log(req.files);
+  console.log("iam hit");
+
+  console.log(req.params.id);
+
+  const recipeId = req.params.id;
+  const recipeInfo = JSON.parse(req.body.data);
+  recipeInfo.path = req.files?.path;
+
+  const result = await RecipeServices.updateRecipeInDb(recipeId, recipeInfo);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "Recipe updated succesfull",
+    data: result,
+  });
+});
+
 const deleteRecipe = catchAsync(async (req, res) => {
   const result = await RecipeServices.deleteRecipeFromDB(req.params.id);
 
@@ -63,6 +110,8 @@ const createComment = catchAsync(async (req, res) => {
     content: req.body.content,
   };
 
+  console.log(payloadComment, "iam hit");
+
   const result = await RecipeServices.createCommentForRecipe(payloadComment);
   sendResponse(res, {
     success: true,
@@ -74,12 +123,13 @@ const createComment = catchAsync(async (req, res) => {
 
 const getAllCommentForSpecificRecipe = catchAsync(async (req, res) => {
   const id = req.params.recipeId;
+  console.log(id, "recipe id for comment");
 
   const result = await RecipeServices.getAllCommentForSpecificRecipe(id);
   sendResponse(res, {
     success: true,
     statusCode: 200,
-    message: "",
+    message: "all comment retrived succestful",
     data: result,
   });
 });
@@ -117,4 +167,6 @@ export const RecipeController = {
   createComment,
   getAllCommentForSpecificRecipe,
   deleteComment,
+  getMyProfile,
+  updateRecipe,
 };

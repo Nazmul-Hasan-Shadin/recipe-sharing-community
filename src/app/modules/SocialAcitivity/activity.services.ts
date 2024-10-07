@@ -6,27 +6,59 @@ import { User } from "../user/user.model";
 const followUserIntoDb = async (userInfo: { id: string; targetId: string }) => {
   const { id: currentUserId, targetId } = userInfo;
 
-  console.log(userInfo.id, userInfo.targetId);
-
   const currentUser = await User.findById(currentUserId);
   const targetUser = await User.findById(targetId);
 
-  console.log(currentUser, "iam current user");
-
   if (!targetUser || !currentUser) {
-    throw new AppError(404, "user is not found");
+    throw new AppError(404, "User is not found");
   }
 
-  if (currentUser.following.includes(targetUser._id)) {
-    throw new AppError(500, "you already followed");
+  const isFollowing = currentUser.following.includes(targetUser._id);
+
+  if (isFollowing) {
+    // Unfollow the target user
+    await User.findByIdAndUpdate(
+      currentUserId,
+      { $pull: { following: targetUser._id } },
+      { new: true }
+    );
+    await User.findByIdAndUpdate(
+      targetId,
+      { $pull: { followers: currentUser._id } },
+      { new: true }
+    );
+  } else {
+    // Follow the target user
+    await User.findByIdAndUpdate(
+      currentUserId,
+      { $addToSet: { following: targetUser._id } }, // Add target user to following
+      { new: true }
+    );
+    await User.findByIdAndUpdate(
+      targetId,
+      { $addToSet: { followers: currentUser._id } }, // Add current user to target user's followers
+      { new: true }
+    );
   }
-
-  currentUser.following.push(targetUser._id);
-  await currentUser.save();
-
-  targetUser.followers.push(currentUser._id);
-  await targetUser.save();
 };
+
+export const getFollowingStatus = async (
+  currentUserId: string,
+  targetUserId: string
+) => {
+  const currentUser = await User.findById(currentUserId);
+  const targetUser = await User.findById(targetUserId);
+  console.log(currentUser, targetUser, "target");
+
+  if (!currentUser || !targetUser) {
+    throw new AppError(404, "User not found");
+  }
+
+  const isFollowing = currentUser.following.includes(targetUser._id);
+  return { isFollowing };
+};
+
+// Export the service
 
 const toggleVoteRecipe = async (
   recipeId: string,
@@ -101,4 +133,5 @@ const toggleVoteRecipe = async (
 export const ActivityServices = {
   followUserIntoDb,
   toggleVoteRecipe,
+  getFollowingStatus,
 };

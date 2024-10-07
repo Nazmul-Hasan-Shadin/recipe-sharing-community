@@ -11,4 +11,10 @@ router.post(
   ActivityController.upvoteRecipeController
 );
 
+router.get(
+  "/:id/following-status",
+  auth("user", "admin"),
+  ActivityController.followingStatus
+);
+
 export const ActivityRoutes = router;

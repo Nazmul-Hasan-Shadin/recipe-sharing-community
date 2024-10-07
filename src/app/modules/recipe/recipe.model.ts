@@ -18,20 +18,18 @@ const recipeSchema = new Schema<TRecipe, TRecipeModel>(
       type: String,
       required: true,
     },
+
     cookingTime: {
       type: Number, // in minutes
-      required: true,
+      // required: true,
     },
-    image: {
-      type: String, // URL or local file path
-    },
+    image: [{ type: String }],
     name: {
       type: String,
     },
     author: {
       type: Schema.Types.ObjectId,
       ref: "User",
-      required: true,
     },
     ratings: [
       {
