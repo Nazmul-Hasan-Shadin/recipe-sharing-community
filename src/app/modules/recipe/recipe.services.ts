@@ -42,15 +42,30 @@ const updateRecipeInDb = async (recipeId: string, recipeInfo: TRecipe) => {
   return result;
 };
 
-const deleteRecipeFromDB = async (recipeId: string) => {
+const deleteRecipeFromDB = async (recipeId: string, isDeleted: boolean) => {
   const result = await Recipe.findOneAndUpdate(
     { _id: recipeId },
     {
-      isDeleted: true,
+      isDeleted,
     }
   );
 
   return result;
+};
+
+const updateRecipePublishStatusIntoDb = async (
+  recipeId: string,
+  action: string
+) => {
+  const isPublished = action === "publish";
+
+  const result = await Recipe.findOneAndUpdate(
+    { _id: recipeId, isDeleted: false },
+    { isPublished, updatedAt: Date.now() },
+    { new: true }
+  );
+
+  return result; // Returns null if no document was found
 };
 
 //  for comment for  individule a recipe
@@ -92,4 +107,5 @@ export const RecipeServices = {
   deleteCommentFromDB,
   myRecipeFromDb,
   updateRecipeInDb,
+  updateRecipePublishStatusIntoDb,
 };

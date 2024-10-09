@@ -29,7 +29,7 @@ function main() {
     });
 }
 main();
-process.on('unhandledRejection', () => {
+process.on("unhandledRejection", () => {
     console.log(`unhandle Rejection is detected, shutting down the server`);
     if (http_1.Server) {
         server.close(() => {

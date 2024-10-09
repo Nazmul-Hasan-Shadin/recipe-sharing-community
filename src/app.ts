@@ -12,7 +12,10 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: ["http://localhost:3000"],
+    origin: [
+      "http://localhost:3000",
+      "https://recipe-community-client-eight.vercel.app",
+    ],
     credentials: true,
   })
 );

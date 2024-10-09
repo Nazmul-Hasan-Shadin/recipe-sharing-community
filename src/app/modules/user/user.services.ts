@@ -43,8 +43,18 @@ const getSingleUserFromDb = async (userId: string) => {
 
   return result;
 };
+
+const getSingleUserByEmailFromDb = async (email: string) => {
+  const result = await User.find({
+    email: email,
+  });
+
+  return result;
+};
+
 export const UserServices = {
   createUserIntoDb,
   updateProfileIntoDb,
   getSingleUserFromDb,
+  getSingleUserByEmailFromDb,
 };

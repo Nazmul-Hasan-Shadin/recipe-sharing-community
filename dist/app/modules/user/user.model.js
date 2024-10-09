@@ -37,6 +37,7 @@ const userSchema = new mongoose_1.Schema({
     },
     profilePicture: {
         type: String,
+        required: true,
     },
     bio: {
         Type: String,
@@ -50,8 +51,8 @@ const userSchema = new mongoose_1.Schema({
     following: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "User" }],
     status: {
         type: String,
-        required: true,
         enum: ["active", "block"],
+        default: "active",
     },
     passwordChangeAt: {
         type: Date,

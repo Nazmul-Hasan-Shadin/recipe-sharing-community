@@ -21,7 +21,9 @@ router.patch(
   multerUpload.array("image"),
   RecipeController.updateRecipe
 );
-router.delete("/recipeId", RecipeController.deleteRecipe);
+
+router.post("/:id/toggle-publish", RecipeController.toggleRecipePublish);
+router.patch("/delete/:recipeId", RecipeController.deleteRecipe);
 
 // for comment route
 

@@ -9,6 +9,7 @@ const userSchema = new Schema<TUser, UserModel>(
       type: String,
       required: true,
     },
+
     email: {
       type: String,
       required: true,
@@ -23,6 +24,9 @@ const userSchema = new Schema<TUser, UserModel>(
     password: {
       type: String,
       required: true,
+    },
+    isPremium: {
+      type: Boolean,
     },
     profilePicture: {
       type: String,

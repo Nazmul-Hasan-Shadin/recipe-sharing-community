@@ -9,6 +9,7 @@ const loginUserIntoDb = async (userInfo: TLoginUser) => {
   const { email, password } = userInfo;
 
   const user = await User.findOne({ email });
+  console.log(user, "logged ind");
 
   if (!user) {
     throw new AppError(404, "user not found");
@@ -110,6 +111,7 @@ const forgetPassword = async (id: string) => {
     username: user.username,
     userId: user._id,
     role: user.role,
+    profilePicture: user?.profilePicture,
   };
 
   const resetToken = jwt.sign(

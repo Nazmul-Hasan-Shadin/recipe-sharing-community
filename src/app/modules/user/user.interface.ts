@@ -1,6 +1,8 @@
-import  { Model, Types } from "mongoose";
+import { Model, ObjectId, Types } from "mongoose";
 
 export interface TUser {
+  _id: string | ObjectId;
+
   id: string;
   username: string;
   email: string;
@@ -14,16 +16,18 @@ export interface TUser {
   role: "admin" | "user";
   status: "block" | "active";
   registeredAt: Date;
-  passwordChangeAt:Date
+  passwordChangeAt: Date;
 }
 
 export interface UserModel extends Model<TUser> {
   isUserExist(id: string): Promise<TUser>;
-  
+
   isPasswordMatched(
     plainTextPassword: string,
-    hashedPassword: string,
-  ): Promise<boolean> ;
-  isJwtIssuedBeforePasswordChanged(passwordChangedTime:Date,JwtIssuedTime:number):boolean
+    hashedPassword: string
+  ): Promise<boolean>;
+  isJwtIssuedBeforePasswordChanged(
+    passwordChangedTime: Date,
+    JwtIssuedTime: number
+  ): boolean;
 }
-

@@ -4,8 +4,10 @@ import { RecipeServices } from "./recipe.services";
 
 const createRecipe = catchAsync(async (req, res) => {
   const allCookingdata = JSON.parse(req.body.data);
-  const image = req.files!.map((file) => file.path);
+  const files = req.files as Express.Multer.File[];
 
+  // Use the correct type for the file parameter in the map function
+  const image = files.map((file: Express.Multer.File) => file.path);
   const userInformation = {
     name: req.user.username,
     author: req.user.userId,
@@ -74,7 +76,13 @@ const updateRecipe = catchAsync(async (req, res) => {
 
   const recipeId = req.params.id;
   const recipeInfo = JSON.parse(req.body.data);
-  recipeInfo.path = req.files?.path;
+  // Explicitly cast req.files as an array of Express.Multer.File
+  const files = req.files as Express.Multer.File[];
+
+  // Extract the path from each file in the array
+  const filePaths = files.map((file) => file.path);
+
+  recipeInfo.path = filePaths;
 
   const result = await RecipeServices.updateRecipeInDb(recipeId, recipeInfo);
 
@@ -87,13 +95,41 @@ const updateRecipe = catchAsync(async (req, res) => {
 });
 
 const deleteRecipe = catchAsync(async (req, res) => {
-  const result = await RecipeServices.deleteRecipeFromDB(req.params.id);
+  const { isDeleted } = req.body;
+  console.log(req.body, "delte logl", req.params.recipeId);
+
+  const result = await RecipeServices.deleteRecipeFromDB(
+    req.params.recipeId,
+    isDeleted
+  );
 
   sendResponse(res, {
     success: true,
     statusCode: 200,
-    message: "Recipe deleted succesfull",
+    message: "Recipe deleted successfully",
     data: result,
+  });
+});
+
+const toggleRecipePublish = catchAsync(async (req, res) => {
+  const { action } = req.body;
+
+  console.log(action, "bdoy aciton");
+  console.log(req.params.id, "loio i");
+
+  const recipe = await RecipeServices.updateRecipePublishStatusIntoDb(
+    req.params.id,
+    action
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message:
+      action === "publish"
+        ? "Recipe published successfully"
+        : "Recipe unpublished successfully",
+    data: recipe,
   });
 });
 
@@ -169,4 +205,5 @@ export const RecipeController = {
   deleteComment,
   getMyProfile,
   updateRecipe,
+  toggleRecipePublish,
 };

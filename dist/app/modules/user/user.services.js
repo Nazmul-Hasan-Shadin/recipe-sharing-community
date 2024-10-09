@@ -29,7 +29,12 @@ const updateProfileIntoDb = (userInfo, payload) => __awaiter(void 0, void 0, voi
     });
     return result;
 });
+const getSingleUserFromDb = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield user_model_1.User.findById(userId);
+    return result;
+});
 exports.UserServices = {
     createUserIntoDb,
     updateProfileIntoDb,
+    getSingleUserFromDb,
 };

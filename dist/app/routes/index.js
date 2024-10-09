@@ -7,7 +7,7 @@ const express_1 = __importDefault(require("express"));
 const user_routes_1 = require("../modules/user/user.routes");
 const auth_routes_1 = require("../modules/Auth/auth.routes");
 const activity_route_1 = require("../modules/SocialAcitivity/activity.route");
-const recipe_routes_1 = require("../modules/Recipe/recipe.routes");
+const recipe_routes_1 = require("../modules/recipe/recipe.routes");
 const router = express_1.default.Router();
 const moduleRoutes = [
     {
