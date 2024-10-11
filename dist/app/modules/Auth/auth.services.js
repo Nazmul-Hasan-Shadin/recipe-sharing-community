@@ -22,6 +22,7 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const loginUserIntoDb = (userInfo) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = userInfo;
     const user = yield user_model_1.User.findOne({ email });
+    console.log(user, "logged ind");
     if (!user) {
         throw new AppError_1.AppError(404, "user not found");
     }
@@ -81,6 +82,7 @@ const forgetPassword = (id) => __awaiter(void 0, void 0, void 0, function* () {
         username: user.username,
         userId: user._id,
         role: user.role,
+        profilePicture: user === null || user === void 0 ? void 0 : user.profilePicture,
     };
     const resetToken = jsonwebtoken_1.default.sign(jwtPayload, config_1.default.jwt_access_token_secret, {
         expiresIn: "6d",

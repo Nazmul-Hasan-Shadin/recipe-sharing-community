@@ -14,7 +14,8 @@ router.get("/", recipe_controller_1.RecipeController.getAllRecipe);
 router.get("/my-profile", (0, auth_1.auth)("user", "admin"), recipe_controller_1.RecipeController.getMyProfile);
 router.get("/:recipeId", recipe_controller_1.RecipeController.getSingleRecipe);
 router.patch("/:id", multer_config_1.multerUpload.array("image"), recipe_controller_1.RecipeController.updateRecipe);
-router.delete("/recipeId", recipe_controller_1.RecipeController.deleteRecipe);
+router.post("/:id/toggle-publish", recipe_controller_1.RecipeController.toggleRecipePublish);
+router.patch("/delete/:recipeId", recipe_controller_1.RecipeController.deleteRecipe);
 // for comment route
 router.post("/:recipeId/comments", (0, auth_1.auth)("user"), recipe_controller_1.RecipeController.createComment);
 router.get("/:recipeId/comments", recipe_controller_1.RecipeController.getAllCommentForSpecificRecipe);

@@ -31,6 +31,10 @@ const recipeSchema = new Schema<TRecipe, TRecipeModel>(
       type: Schema.Types.ObjectId,
       ref: "User",
     },
+    isPublished: {
+      type: Boolean,
+      default: true,
+    },
     ratings: [
       {
         user: { type: Schema.Types.ObjectId, ref: "User" },

@@ -52,6 +52,18 @@ const getSingleUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, 
         data: result,
     });
 }));
+// const getSingleUser = catchAsync(async (req, res) => {
+//   console.log("iam hit");
+//   console.log(req.params);
+//   const userId = req.params.userId;
+//   const result = await UserServices.getSingleUserFromDb(userId);
+//   sendResponse(res, {
+//     success: true,
+//     statusCode: 200,
+//     message: "user retrived succesfull",
+//     data: result,
+//   });
+// });
 exports.UserController = {
     createUser,
     updateUser,

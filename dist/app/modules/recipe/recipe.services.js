@@ -42,11 +42,16 @@ const updateRecipeInDb = (recipeId, recipeInfo) => __awaiter(void 0, void 0, voi
     });
     return result;
 });
-const deleteRecipeFromDB = (recipeId) => __awaiter(void 0, void 0, void 0, function* () {
+const deleteRecipeFromDB = (recipeId, isDeleted) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield recipe_model_1.Recipe.findOneAndUpdate({ _id: recipeId }, {
-        isDeleted: true,
+        isDeleted,
     });
     return result;
+});
+const updateRecipePublishStatusIntoDb = (recipeId, action) => __awaiter(void 0, void 0, void 0, function* () {
+    const isPublished = action === "publish";
+    const result = yield recipe_model_1.Recipe.findOneAndUpdate({ _id: recipeId, isDeleted: false }, { isPublished, updatedAt: Date.now() }, { new: true });
+    return result; // Returns null if no document was found
 });
 //  for comment for  individule a recipe
 const createCommentForRecipe = (comments) => __awaiter(void 0, void 0, void 0, function* () {
@@ -75,4 +80,5 @@ exports.RecipeServices = {
     deleteCommentFromDB,
     myRecipeFromDb,
     updateRecipeInDb,
+    updateRecipePublishStatusIntoDb,
 };

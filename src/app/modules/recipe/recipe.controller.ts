@@ -117,10 +117,12 @@ const toggleRecipePublish = catchAsync(async (req, res) => {
   console.log(action, "bdoy aciton");
   console.log(req.params.id, "loio i");
 
-  const recipe = await RecipeServices.updateRecipePublishStatusIntoDb(
+  const result = await RecipeServices.updateRecipePublishStatusIntoDb(
     req.params.id,
     action
   );
+
+  console.log(result, "fjdkfjdkf");
 
   sendResponse(res, {
     success: true,
@@ -129,7 +131,7 @@ const toggleRecipePublish = catchAsync(async (req, res) => {
       action === "publish"
         ? "Recipe published successfully"
         : "Recipe unpublished successfully",
-    data: recipe,
+    data: result,
   });
 });
 

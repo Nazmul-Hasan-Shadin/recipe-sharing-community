@@ -5,12 +5,18 @@ import { multerUpload } from "../../config/multer.config";
 
 const router = express.Router();
 
+router.get("/", UserController.getAllUsers);
+
 router.post(
   "/register",
   multerUpload.single("profilePicture"),
   UserController.createUser
 );
 router.post("/update-profile", auth("user"), UserController.updateUser);
+
 router.get("/:userId", UserController.getSingleUser);
+router.patch("/:userId/status", UserController.changeUserStatus);
+
+router.delete("/:userId", UserController.deleteUser);
 
 export const UserRoutes = router;

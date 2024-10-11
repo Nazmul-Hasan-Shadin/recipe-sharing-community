@@ -1,5 +1,7 @@
+import { AppError } from "../../errors/AppError";
 import { TUser } from "./user.interface";
 import { User } from "./user.model";
+type UserStatus = "block" | "active";
 
 const createUserIntoDb = async (userInfo: TUser) => {
   const result = await User.create(userInfo);
@@ -44,6 +46,28 @@ const getSingleUserFromDb = async (userId: string) => {
   return result;
 };
 
+const getAllUsersFromDb = async () => {
+  const result = await User.find();
+
+  return result;
+};
+const deleteUserFromDb = async (userId: string) => {
+  // Check if the user exists
+  console.log(userId, "delete");
+
+  const user = await User.findById(userId);
+
+  if (!user) {
+    throw new AppError(404, "User not found");
+  }
+
+  // Delete the user using deleteOne
+  const result = await User.deleteOne({ _id: userId });
+  console.log(result);
+
+  return result;
+};
+
 const getSingleUserByEmailFromDb = async (email: string) => {
   const result = await User.find({
     email: email,
@@ -52,9 +76,32 @@ const getSingleUserByEmailFromDb = async (email: string) => {
   return result;
 };
 
+export const changeUserStatusInDb = async (
+  userId: string,
+  status: UserStatus
+) => {
+  console.log(userId, status, "User ID and status");
+
+  // Find the user and update their status
+  const user = await User.findByIdAndUpdate(
+    userId,
+    { status },
+    { new: true, runValidators: true }
+  );
+
+  if (!user) {
+    throw new AppError(404, "User not found");
+  }
+
+  return { message: "User status updated successfully", user };
+};
+
 export const UserServices = {
   createUserIntoDb,
   updateProfileIntoDb,
   getSingleUserFromDb,
   getSingleUserByEmailFromDb,
+  getAllUsersFromDb,
+  deleteUserFromDb,
+  changeUserStatusInDb,
 };

@@ -29,6 +29,7 @@ export interface TRecipe {
   ratings?: TRating[]; // Array of rating objects
   upvotes?: Types.ObjectId;
   isPremium?: boolean;
+  isPublished:boolean
   name?: string;
   downvotes?: Types.ObjectId;
   isDeleted?: boolean;

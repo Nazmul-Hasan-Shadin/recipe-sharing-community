@@ -35,6 +35,9 @@ const userSchema = new mongoose_1.Schema({
         type: String,
         required: true,
     },
+    isPremium: {
+        type: Boolean,
+    },
     profilePicture: {
         type: String,
         required: true,

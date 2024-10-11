@@ -84,12 +84,28 @@ const updateRecipe = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, v
     });
 }));
 const deleteRecipe = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield recipe_services_1.RecipeServices.deleteRecipeFromDB(req.params.id);
+    const { isDeleted } = req.body;
+    console.log(req.body, "delte logl", req.params.recipeId);
+    const result = yield recipe_services_1.RecipeServices.deleteRecipeFromDB(req.params.recipeId, isDeleted);
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: 200,
-        message: "Recipe deleted succesfull",
+        message: "Recipe deleted successfully",
         data: result,
+    });
+}));
+const toggleRecipePublish = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { action } = req.body;
+    console.log(action, "bdoy aciton");
+    console.log(req.params.id, "loio i");
+    const recipe = yield recipe_services_1.RecipeServices.updateRecipePublishStatusIntoDb(req.params.id, action);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: 200,
+        message: action === "publish"
+            ? "Recipe published successfully"
+            : "Recipe unpublished successfully",
+        data: recipe,
     });
 }));
 // =============comment api service ==============
@@ -151,4 +167,5 @@ exports.RecipeController = {
     deleteComment,
     getMyProfile,
     updateRecipe,
+    toggleRecipePublish,
 };
