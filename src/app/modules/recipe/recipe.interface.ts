@@ -28,8 +28,9 @@ export interface TRecipe {
   author?: Types.ObjectId; // User ID as string
   ratings?: TRating[]; // Array of rating objects
   upvotes?: Types.ObjectId;
+  averageRating: number;
   isPremium?: boolean;
-  isPublished:boolean
+  isPublished: boolean;
   name?: string;
   downvotes?: Types.ObjectId;
   isDeleted?: boolean;

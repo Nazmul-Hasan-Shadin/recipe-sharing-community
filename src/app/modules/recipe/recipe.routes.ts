@@ -2,6 +2,7 @@ import express from "express";
 import { RecipeController } from "./recipe.controller";
 import { auth } from "../Auth/auth";
 import { multerUpload } from "../../config/multer.config";
+import { AuthController } from "../Auth/auth.controller";
 
 const router = express.Router();
 
@@ -41,5 +42,7 @@ router.post(
   auth("user"),
   RecipeController.deleteComment
 );
+
+router.patch("/:recipeId/rate", auth("user"), RecipeController.rateRecipe);
 
 export const RecipeRoutes = router;

@@ -35,6 +35,10 @@ const recipeSchema = new Schema<TRecipe, TRecipeModel>(
       type: Boolean,
       default: true,
     },
+    averageRating:{
+     type:Number,
+     default:0
+    },
     ratings: [
       {
         user: { type: Schema.Types.ObjectId, ref: "User" },

@@ -1,5 +1,6 @@
 import catchAsync from "../../../utils/catchAsync";
 import sendResponse from "../../../utils/sendResponse";
+import { AppError } from "../../errors/AppError";
 import { RecipeServices } from "./recipe.services";
 
 const createRecipe = catchAsync(async (req, res) => {
@@ -135,6 +136,33 @@ const toggleRecipePublish = catchAsync(async (req, res) => {
   });
 });
 
+const rateRecipe = catchAsync(async (req, res) => {
+  const { recipeId } = req.params;
+  const { rating } = req.body;
+  const userId = req.user.userId;
+  console.log(recipeId, rating, userId);
+
+  // Validate the rating value
+  if (!rating || rating < 1 || rating > 5) {
+    throw new AppError(400, "Rating must be between 1 and 5");
+  }
+
+  // Add or update the rating
+  const result = await RecipeServices.addOrUpdateRating(
+    recipeId,
+    userId.toString(),
+    rating
+  );
+
+  sendResponse(res, {
+    success: true,
+
+    statusCode: 200,
+    message: "Rate successful",
+    data: result,
+  });
+});
+
 // =============comment api service ==============
 
 const createComment = catchAsync(async (req, res) => {
@@ -208,4 +236,5 @@ export const RecipeController = {
   getMyProfile,
   updateRecipe,
   toggleRecipePublish,
+  rateRecipe,
 };
