@@ -38,6 +38,7 @@ const loginUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void
 const changePassword = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const payload = req.body;
     const userData = req.user;
+    console.log(payload, userData);
     const result = yield auth_services_1.AuthServices.changePassword(userData, payload);
     (0, sendResponse_1.default)(res, {
         success: true,
@@ -47,7 +48,8 @@ const changePassword = (0, catchAsync_1.default)((req, res) => __awaiter(void 0,
     });
 }));
 const forgetPassword = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield auth_services_1.AuthServices.forgetPassword(req.user.userId);
+    const result = yield auth_services_1.AuthServices.forgetPassword(req.body.email);
+    console.log(result);
     (0, sendResponse_1.default)(res, {
         statusCode: 200,
         success: true,
@@ -56,7 +58,7 @@ const forgetPassword = (0, catchAsync_1.default)((req, res) => __awaiter(void 0,
     });
 }));
 const resetPassword = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const token = req.headers.authorization;
+    const token = req.body.token;
     const result = yield auth_services_1.AuthServices.resetPasswordIntoDb(req.body, token);
     (0, sendResponse_1.default)(res, {
         statusCode: 200,

@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RecipeController = void 0;
 const catchAsync_1 = __importDefault(require("../../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../../utils/sendResponse"));
+const AppError_1 = require("../../errors/AppError");
 const recipe_services_1 = require("./recipe.services");
 const createRecipe = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
@@ -27,7 +28,6 @@ const createRecipe = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, v
         author: req.user.userId,
         profilePicture: (_a = req.user) === null || _a === void 0 ? void 0 : _a.profilePicture,
     };
-    console.log(req.user, "iam user");
     const recipeData = Object.assign(Object.assign(Object.assign({}, allCookingdata), userInformation), { image });
     const result = yield recipe_services_1.RecipeServices.createRecipeIntoDb(recipeData);
     (0, sendResponse_1.default)(res, {
@@ -38,7 +38,7 @@ const createRecipe = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, v
     });
 }));
 const getMyProfile = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield recipe_services_1.RecipeServices.myRecipeFromDb(req.user.userId);
+    const result = yield recipe_services_1.RecipeServices.myRecipeFromDb(req.user.userId, req.query);
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: 200,
@@ -65,9 +65,6 @@ const getSingleRecipe = (0, catchAsync_1.default)((req, res) => __awaiter(void 0
     });
 }));
 const updateRecipe = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(req.files);
-    console.log("iam hit");
-    console.log(req.params.id);
     const recipeId = req.params.id;
     const recipeInfo = JSON.parse(req.body.data);
     // Explicitly cast req.files as an array of Express.Multer.File
@@ -85,8 +82,16 @@ const updateRecipe = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, v
 }));
 const deleteRecipe = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { isDeleted } = req.body;
-    console.log(req.body, "delte logl", req.params.recipeId);
     const result = yield recipe_services_1.RecipeServices.deleteRecipeFromDB(req.params.recipeId, isDeleted);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: 200,
+        message: "Recipe deleted successfully",
+        data: result,
+    });
+}));
+const deleteRecipeByUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield recipe_services_1.RecipeServices.deleteRecipeByUserFromDB(req.params.recipeId);
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: 200,
@@ -96,16 +101,31 @@ const deleteRecipe = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, v
 }));
 const toggleRecipePublish = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { action } = req.body;
-    console.log(action, "bdoy aciton");
-    console.log(req.params.id, "loio i");
-    const recipe = yield recipe_services_1.RecipeServices.updateRecipePublishStatusIntoDb(req.params.id, action);
+    const result = yield recipe_services_1.RecipeServices.updateRecipePublishStatusIntoDb(req.params.id, action);
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: 200,
         message: action === "publish"
             ? "Recipe published successfully"
             : "Recipe unpublished successfully",
-        data: recipe,
+        data: result,
+    });
+}));
+const rateRecipe = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { recipeId } = req.params;
+    const { rating } = req.body;
+    const userId = req.user.userId;
+    // Validate the rating value
+    if (!rating || rating < 1 || rating > 5) {
+        throw new AppError_1.AppError(400, "Rating must be between 1 and 5");
+    }
+    // Add or update the rating
+    const result = yield recipe_services_1.RecipeServices.addOrUpdateRating(recipeId, userId.toString(), rating);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: 200,
+        message: "Rate successful",
+        data: result,
     });
 }));
 // =============comment api service ==============
@@ -117,7 +137,6 @@ const createComment = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, 
         recipeId,
         content: req.body.content,
     };
-    console.log(payloadComment, "iam hit");
     const result = yield recipe_services_1.RecipeServices.createCommentForRecipe(payloadComment);
     (0, sendResponse_1.default)(res, {
         success: true,
@@ -128,7 +147,6 @@ const createComment = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, 
 }));
 const getAllCommentForSpecificRecipe = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.params.recipeId;
-    console.log(id, "recipe id for comment");
     const result = yield recipe_services_1.RecipeServices.getAllCommentForSpecificRecipe(id);
     (0, sendResponse_1.default)(res, {
         success: true,
@@ -138,8 +156,19 @@ const getAllCommentForSpecificRecipe = (0, catchAsync_1.default)((req, res) => _
     });
 }));
 const deleteComment = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const userId = req.user.userId;
-    const result = yield recipe_services_1.RecipeServices.deleteCommentFromDB(userId);
+    const recipeId = req.params.recipeId;
+    const result = yield recipe_services_1.RecipeServices.deleteCommentFromDB(recipeId);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: 200,
+        message: "Comment deleted succesfull",
+        data: result,
+    });
+}));
+const editComment = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { commentId } = req.params;
+    const { content } = req.body;
+    const result = yield recipe_services_1.RecipeServices.updateComment(commentId, content);
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: 200,
@@ -168,4 +197,7 @@ exports.RecipeController = {
     getMyProfile,
     updateRecipe,
     toggleRecipePublish,
+    rateRecipe,
+    editComment,
+    deleteRecipeByUser
 };

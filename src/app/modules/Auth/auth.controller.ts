@@ -15,6 +15,8 @@ const loginUser = catchAsync(async (req, res) => {
     sameSite: "none",
   });
 
+  console.log(result);
+
   sendResponse(res, {
     success: true,
     statusCode: 200,
@@ -42,10 +44,8 @@ const changePassword = catchAsync(async (req, res) => {
 });
 
 const forgetPassword = catchAsync(async (req, res) => {
-   
   const result = await AuthServices.forgetPassword(req.body.email);
   console.log(result);
-  
 
   sendResponse(res, {
     statusCode: 200,

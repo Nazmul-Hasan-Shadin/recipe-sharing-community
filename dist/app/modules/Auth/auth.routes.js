@@ -10,6 +10,6 @@ const auth_1 = require("./auth");
 const router = express_1.default.Router();
 router.post("/login", auth_controller_1.AuthController.loginUser);
 router.post("/change-password", (0, auth_1.auth)("user", "admin"), auth_controller_1.AuthController.changePassword);
-router.post("/reset-passwor", (0, auth_1.auth)("user", "admin"), auth_controller_1.AuthController.resetPassword);
-router.post('/forget-password', (0, auth_1.auth)('user'), auth_controller_1.AuthController.forgetPassword);
+router.patch("/reset-password", auth_controller_1.AuthController.resetPassword);
+router.post("/forget-password", auth_controller_1.AuthController.forgetPassword);
 exports.AuthRoutes = router;

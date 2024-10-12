@@ -16,8 +16,11 @@ router.get("/:recipeId", recipe_controller_1.RecipeController.getSingleRecipe);
 router.patch("/:id", multer_config_1.multerUpload.array("image"), recipe_controller_1.RecipeController.updateRecipe);
 router.post("/:id/toggle-publish", recipe_controller_1.RecipeController.toggleRecipePublish);
 router.patch("/delete/:recipeId", recipe_controller_1.RecipeController.deleteRecipe);
+router.delete("/delete-user-recipe/:recipeId", (0, auth_1.auth)('user', 'admin'), recipe_controller_1.RecipeController.deleteRecipeByUser);
 // for comment route
 router.post("/:recipeId/comments", (0, auth_1.auth)("user"), recipe_controller_1.RecipeController.createComment);
 router.get("/:recipeId/comments", recipe_controller_1.RecipeController.getAllCommentForSpecificRecipe);
-router.post("/:recipeId/comments", (0, auth_1.auth)("user"), recipe_controller_1.RecipeController.deleteComment);
+router.put("/comments/:commentId", recipe_controller_1.RecipeController.editComment);
+router.delete("/:recipeId/comments", (0, auth_1.auth)("user"), recipe_controller_1.RecipeController.deleteComment);
+router.patch("/:recipeId/rate", (0, auth_1.auth)("user", "admin"), recipe_controller_1.RecipeController.rateRecipe);
 exports.RecipeRoutes = router;

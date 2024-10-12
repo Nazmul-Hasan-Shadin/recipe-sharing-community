@@ -22,14 +22,21 @@ const getAllRecipeFromDb = async (query: Record<string, unknown>) => {
   return result;
 };
 
-const myRecipeFromDb = async (userId: string) => {
-  const result = await Recipe.find({ author: userId });
+const myRecipeFromDb = async (
+  userId: string,
+  query: Record<string, unknown>
+) => {
+  const profileQuery = new QueryBuilder(Recipe.find({ author: userId }), query)
+    .search(recipeSearchableField)
+    .filter()
+    .sort()
+    .paginate();
+  const result = await profileQuery.modelQuery;
 
   return result;
 };
 
 const getSingleRecipeFromDb = async (recipeId: string) => {
-
   const result = await Recipe.findById(recipeId);
 
   return result;
@@ -50,6 +57,13 @@ const deleteRecipeFromDB = async (recipeId: string, isDeleted: boolean) => {
       isDeleted,
     }
   );
+
+  return result;
+};
+
+const deleteRecipeByUserFromDB = async (recipeId: string) => {
+  const result = await Recipe.deleteOne({ _id: recipeId });
+  console.log(result, "recipe id");
 
   return result;
 };
@@ -129,13 +143,10 @@ const getAllCommentForSpecificRecipe = async (recipeId: string) => {
     recipeId,
   }).populate("userId");
 
-
-
   return result;
 };
 
 const deleteCommentFromDB = async (commentId: string) => {
-
   const result = await Comment.deleteOne({ _id: commentId });
 
   return result;
@@ -167,5 +178,6 @@ export const RecipeServices = {
   updateRecipeInDb,
   updateRecipePublishStatusIntoDb,
   addOrUpdateRating,
-  updateComment
+  updateComment,
+  deleteRecipeByUserFromDB,
 };

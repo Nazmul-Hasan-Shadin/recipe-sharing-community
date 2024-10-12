@@ -22,9 +22,9 @@ function main() {
         yield mongoose_1.default.connect(config_1.default.db_uri, {
             dbName: "recipe-community",
         });
-        console.log("Db is connected");
         server = app_1.default.listen(config_1.default.port, () => {
-            console.log("server is running");
+            console.log("connectd");
+            console.log("servicer is listening");
         });
     });
 }

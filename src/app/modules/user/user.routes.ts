@@ -12,7 +12,7 @@ router.post(
   multerUpload.single("profilePicture"),
   UserController.createUser
 );
-router.post("/update-profile", auth("user"), UserController.updateUser);
+router.patch("/update-profile", multerUpload.single("profilePicture"), auth("user",'admin'), UserController.updateUser);
 
 router.get("/:userId", UserController.getSingleUser);
 router.patch("/:userId/status", UserController.changeUserStatus);

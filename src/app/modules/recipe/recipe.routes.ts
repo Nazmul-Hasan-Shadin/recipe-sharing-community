@@ -25,6 +25,7 @@ router.patch(
 
 router.post("/:id/toggle-publish", RecipeController.toggleRecipePublish);
 router.patch("/delete/:recipeId", RecipeController.deleteRecipe);
+router.delete("/delete-user-recipe/:recipeId",auth('user','admin') , RecipeController.deleteRecipeByUser);
 
 // for comment route
 
@@ -46,6 +47,10 @@ router.delete(
   RecipeController.deleteComment
 );
 
-router.patch("/:recipeId/rate", auth("user"), RecipeController.rateRecipe);
+router.patch(
+  "/:recipeId/rate",
+  auth("user", "admin"),
+  RecipeController.rateRecipe
+);
 
 export const RecipeRoutes = router;

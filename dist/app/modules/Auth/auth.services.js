@@ -22,7 +22,6 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const loginUserIntoDb = (userInfo) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = userInfo;
     const user = yield user_model_1.User.findOne({ email });
-    console.log(user, "logged ind");
     if (!user) {
         throw new AppError_1.AppError(404, "user not found");
     }
@@ -49,7 +48,9 @@ const loginUserIntoDb = (userInfo) => __awaiter(void 0, void 0, void 0, function
     };
 });
 const changePassword = (userData, payload) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield user_model_1.User.isUserExist(userData.id);
+    console.log(userData, "iam userData");
+    const user = yield user_model_1.User.isUserExist(userData.userId);
+    console.log("iam inside service", user);
     if (!user) {
         throw new AppError_1.AppError(404, "user not found");
     }
@@ -58,7 +59,6 @@ const changePassword = (userData, payload) => __awaiter(void 0, void 0, void 0, 
         throw new AppError_1.AppError(404, "password donnot match.try again");
     }
     const newHashedPassword = yield bcrypt_1.default.hash(payload.newPassword, Number(config_1.default.bcrypt_salt));
-    console.log(newHashedPassword, "iam hsashed paas");
     const result = yield user_model_1.User.findOneAndUpdate({
         _id: userData.userId,
         role: userData.role,
@@ -68,8 +68,11 @@ const changePassword = (userData, payload) => __awaiter(void 0, void 0, void 0, 
     });
     return result;
 });
-const forgetPassword = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield user_model_1.User.isUserExist(id);
+const forgetPassword = (email) => __awaiter(void 0, void 0, void 0, function* () {
+    // const user = await User.isUserExist(id);
+    console.log(email);
+    const user = yield user_model_1.User.findOne({ email: email });
+    console.log(user, "iam user");
     const userStatus = user === null || user === void 0 ? void 0 : user.status;
     if (!user) {
         throw new AppError_1.AppError(404, "This user is not found ");
@@ -89,28 +92,29 @@ const forgetPassword = (id) => __awaiter(void 0, void 0, void 0, function* () {
     });
     const resetUILink = `${config_1.default.reset_ui_pass_link}?id=${user._id}&token=${resetToken}`;
     console.log(resetUILink);
-    (0, SendMail_1.sendEmail)(user === null || user === void 0 ? void 0 : user.email, resetUILink);
+    (0, SendMail_1.sendEmail)(user === null || user === void 0 ? void 0 : user.email, resetUILink)
+        .then(() => console.log("Email sent successfully"))
+        .catch((error) => console.error("Error sending email:", error));
 });
 const resetPasswordIntoDb = (payload, token) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(payload.id);
-    const user = yield user_model_1.User.isUserExist(payload.id);
-    console.log(user);
+    // const user = await User.isUserExist(payload.id);
+    console.log(payload.userId);
+    const user = yield user_model_1.User.findById(payload.userId);
+    console.log(user, "iam user");
     if (!user) {
         throw new AppError_1.AppError(404, "This user is not found ");
     }
     const decoded = jsonwebtoken_1.default.verify(token, config_1.default.jwt_access_token_secret);
-    console.log("decoded id", decoded.userId);
-    if (payload.id !== decoded.userId) {
+    if (payload.userId !== decoded.userId) {
         throw new AppError_1.AppError(401, "Your are forbidden");
     }
     const newHashedPassword = yield bcrypt_1.default.hash(payload.newPassword, Number(config_1.default.bcrypt_salt));
     const result = yield user_model_1.User.findOneAndUpdate({
-        id: decoded.userId,
-        role: decoded.role,
+        _id: decoded.userId,
     }, {
         password: newHashedPassword,
-        passwordChangeAt: new Date(),
     });
+    return result;
 });
 exports.AuthServices = {
     loginUserIntoDb,

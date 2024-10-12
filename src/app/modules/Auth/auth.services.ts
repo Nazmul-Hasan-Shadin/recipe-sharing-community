@@ -8,11 +8,17 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 const loginUserIntoDb = async (userInfo: TLoginUser) => {
   const { email, password } = userInfo;
 
-  const user = await User.findOne({ email });
+  console.log(email,password,'iam hit');
+  
+
+  const user = await User.findOne({ email:email });
 
   if (!user) {
+    console.log('usernot fuu');
+    
     throw new AppError(404, "user not found");
   }
+  console.log(email,password,'iam hit');
 
   const isPasswordCorrect = await bcrypt.compare(
     password,
@@ -97,6 +103,8 @@ const changePassword = async (
 
 const forgetPassword = async (email: string) => {
   // const user = await User.isUserExist(id);
+  console.log(email);
+  
 
   const user = await User.findOne({ email: email });
   console.log(user, "iam user");

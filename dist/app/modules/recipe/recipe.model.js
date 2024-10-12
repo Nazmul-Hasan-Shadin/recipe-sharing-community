@@ -30,6 +30,14 @@ const recipeSchema = new mongoose_1.Schema({
         type: mongoose_1.Schema.Types.ObjectId,
         ref: "User",
     },
+    isPublished: {
+        type: Boolean,
+        default: true,
+    },
+    averageRating: {
+        type: Number,
+        default: 0
+    },
     ratings: [
         {
             user: { type: mongoose_1.Schema.Types.ObjectId, ref: "User" },

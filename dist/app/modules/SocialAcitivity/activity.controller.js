@@ -21,8 +21,6 @@ const followUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
         id: req.user.userId,
         targetId: req.params.id,
     };
-    console.log("iam hit", req.params.id);
-    console.log(req.body, "iam bdoy bro");
     const result = yield activity_services_1.ActivityServices.followUserIntoDb(userInfo);
     (0, sendResponse_1.default)(res, {
         success: true,
@@ -34,7 +32,6 @@ const followUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
 const followingStatus = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userId = req.params.id;
     const currentUserId = req.user.userId;
-    console.log(userId, currentUserId, "insid folloiwng status");
     const result = yield activity_services_1.ActivityServices.getFollowingStatus(currentUserId, userId);
     (0, sendResponse_1.default)(res, {
         success: true,
@@ -44,7 +41,6 @@ const followingStatus = (0, catchAsync_1.default)((req, res) => __awaiter(void 0
     });
 }));
 exports.upvoteRecipeController = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("iam hit");
     const { recipeId: optionalid, type } = req.body;
     const { recipeId } = req.params;
     const userId = req.user.userId;

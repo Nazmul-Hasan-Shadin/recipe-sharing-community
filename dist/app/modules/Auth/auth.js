@@ -32,8 +32,8 @@ const auth = (...requiredRole) => {
         catch (_error) {
             throw new AppError_1.AppError(401, "unauthorized");
         }
-        const { role, id } = decoded;
-        const user = yield user_model_1.User.isUserExist(id);
+        const { role, userId } = decoded;
+        const user = yield user_model_1.User.isUserExist(userId);
         if (!user) {
             throw new AppError_1.AppError(404, "user not found");
         }

@@ -22,7 +22,18 @@ const createUser = catchAsync(async (req, res) => {
 const updateUser = catchAsync(async (req, res) => {
   const paylod = req.body;
 
-  const result = await UserServices.updateProfileIntoDb(req.user, paylod);
+  const data={
+    ...JSON.parse(req.body.data),
+    profilePicture:req.file?.path
+    
+  }
+
+  console.log(paylod,'udpate user');
+  console.log(req.file,'iam file');
+  
+  
+
+  const result = await UserServices.updateProfileIntoDb(req.user, data);
 
   sendResponse(res, {
     success: true,

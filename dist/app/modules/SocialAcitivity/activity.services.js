@@ -49,7 +49,6 @@ const getFollowingStatus = (currentUserId, targetUserId) => __awaiter(void 0, vo
     const targetUserObjectId = new mongoose_1.Types.ObjectId(targetUserId);
     const currentUser = yield user_model_1.User.findById(currentUserObjectId);
     const targetUser = yield user_model_1.User.findById(targetUserObjectId);
-    console.log(currentUser, targetUser, "target");
     if (!currentUser || !targetUser) {
         throw new AppError_1.AppError(404, "User not found");
     }

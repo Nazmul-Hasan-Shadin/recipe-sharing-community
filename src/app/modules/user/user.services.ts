@@ -18,15 +18,18 @@ const updateProfileIntoDb = async (
     bio?: string;
   }
 ) => {
+
+  console.log(userInfo);
+  
   const { userId } = userInfo;
 
-  const user = await User.findById(userInfo);
+  const user = await User.findById(userInfo.userId);
 
 
   const result = await User.findByIdAndUpdate(
-    userId,
+    userInfo.userId,
     {
-      name: payload?.name,
+      username: payload?.name,
       profilePicture: payload?.profilePicture,
       bio: payload?.bio,
     },

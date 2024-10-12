@@ -34,7 +34,7 @@ const createRecipe = catchAsync(async (req, res) => {
 });
 
 const getMyProfile = catchAsync(async (req, res) => {
-  const result = await RecipeServices.myRecipeFromDb(req.user.userId);
+  const result = await RecipeServices.myRecipeFromDb(req.user.userId,req.query);
 
   sendResponse(res, {
     success: true,
@@ -97,6 +97,21 @@ const deleteRecipe = catchAsync(async (req, res) => {
   const result = await RecipeServices.deleteRecipeFromDB(
     req.params.recipeId,
     isDeleted
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "Recipe deleted successfully",
+    data: result,
+  });
+});
+
+const deleteRecipeByUser = catchAsync(async (req, res) => {
+ 
+
+  const result = await RecipeServices.deleteRecipeByUserFromDB(
+    req.params.recipeId
   );
 
   sendResponse(res, {
@@ -240,5 +255,6 @@ export const RecipeController = {
   updateRecipe,
   toggleRecipePublish,
   rateRecipe,
-  editComment
+  editComment,
+  deleteRecipeByUser
 };
