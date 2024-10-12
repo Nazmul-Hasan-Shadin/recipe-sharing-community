@@ -15,7 +15,6 @@ const createRecipe = catchAsync(async (req, res) => {
     profilePicture: req.user?.profilePicture,
   };
 
-  console.log(req.user, "iam user");
 
   const recipeData = {
     ...allCookingdata,
@@ -70,10 +69,7 @@ const getSingleRecipe = catchAsync(async (req, res) => {
 });
 
 const updateRecipe = catchAsync(async (req, res) => {
-  console.log(req.files);
-  console.log("iam hit");
 
-  console.log(req.params.id);
 
   const recipeId = req.params.id;
   const recipeInfo = JSON.parse(req.body.data);
@@ -97,7 +93,6 @@ const updateRecipe = catchAsync(async (req, res) => {
 
 const deleteRecipe = catchAsync(async (req, res) => {
   const { isDeleted } = req.body;
-  console.log(req.body, "delte logl", req.params.recipeId);
 
   const result = await RecipeServices.deleteRecipeFromDB(
     req.params.recipeId,
@@ -115,15 +110,12 @@ const deleteRecipe = catchAsync(async (req, res) => {
 const toggleRecipePublish = catchAsync(async (req, res) => {
   const { action } = req.body;
 
-  console.log(action, "bdoy aciton");
-  console.log(req.params.id, "loio i");
 
   const result = await RecipeServices.updateRecipePublishStatusIntoDb(
     req.params.id,
     action
   );
 
-  console.log(result, "fjdkfjdkf");
 
   sendResponse(res, {
     success: true,
@@ -140,7 +132,6 @@ const rateRecipe = catchAsync(async (req, res) => {
   const { recipeId } = req.params;
   const { rating } = req.body;
   const userId = req.user.userId;
-  console.log(recipeId, rating, userId);
 
   // Validate the rating value
   if (!rating || rating < 1 || rating > 5) {
@@ -176,7 +167,6 @@ const createComment = catchAsync(async (req, res) => {
     content: req.body.content,
   };
 
-  console.log(payloadComment, "iam hit");
 
   const result = await RecipeServices.createCommentForRecipe(payloadComment);
   sendResponse(res, {
@@ -189,7 +179,6 @@ const createComment = catchAsync(async (req, res) => {
 
 const getAllCommentForSpecificRecipe = catchAsync(async (req, res) => {
   const id = req.params.recipeId;
-  console.log(id, "recipe id for comment");
 
   const result = await RecipeServices.getAllCommentForSpecificRecipe(id);
   sendResponse(res, {
@@ -201,9 +190,23 @@ const getAllCommentForSpecificRecipe = catchAsync(async (req, res) => {
 });
 
 const deleteComment = catchAsync(async (req, res) => {
-  const userId = req.user.userId as string;
+  const recipeId = req.params.recipeId;
 
-  const result = await RecipeServices.deleteCommentFromDB(userId);
+  const result = await RecipeServices.deleteCommentFromDB(recipeId);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "Comment deleted succesfull",
+    data: result,
+  });
+});
+
+ const editComment = catchAsync(async (req, res) => {
+  const { commentId } = req.params;
+  const { content } = req.body;
+
+  const result = await RecipeServices.updateComment(commentId, content);
 
   sendResponse(res, {
     success: true,
@@ -237,4 +240,5 @@ export const RecipeController = {
   updateRecipe,
   toggleRecipePublish,
   rateRecipe,
+  editComment
 };

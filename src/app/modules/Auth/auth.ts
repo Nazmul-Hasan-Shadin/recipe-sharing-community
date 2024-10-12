@@ -23,10 +23,9 @@ export const auth = (...requiredRole: string[]) => {
       throw new AppError(401, "unauthorized");
     }
 
+    const { role, userId } = decoded;
 
-    const { role, id } = decoded;
-
-    const user = await User.isUserExist(id);
+    const user = await User.isUserExist(userId);
     if (!user) {
       throw new AppError(404, "user not found");
     }

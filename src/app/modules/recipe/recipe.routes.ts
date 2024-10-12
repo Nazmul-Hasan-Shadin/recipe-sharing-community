@@ -37,7 +37,10 @@ router.get(
   "/:recipeId/comments",
   RecipeController.getAllCommentForSpecificRecipe
 );
-router.post(
+
+router.put("/comments/:commentId", RecipeController.editComment);
+
+router.delete(
   "/:recipeId/comments",
   auth("user"),
   RecipeController.deleteComment

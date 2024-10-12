@@ -9,9 +9,10 @@ async function main() {
   await mongoose.connect(config.db_uri as string, {
     dbName: "recipe-community",
   });
-  console.log("Db is connected");
   server = app.listen(config.port, () => {
-    console.log("server is running");
+    console.log("connectd");
+
+    console.log("servicer is listening");
   });
 }
 

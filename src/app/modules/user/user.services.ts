@@ -19,11 +19,9 @@ const updateProfileIntoDb = async (
   }
 ) => {
   const { userId } = userInfo;
-  console.log(userInfo, "iam info");
 
   const user = await User.findById(userInfo);
 
-  console.log(user, "iam user");
 
   const result = await User.findByIdAndUpdate(
     userId,
@@ -53,7 +51,6 @@ const getAllUsersFromDb = async () => {
 };
 const deleteUserFromDb = async (userId: string) => {
   // Check if the user exists
-  console.log(userId, "delete");
 
   const user = await User.findById(userId);
 
@@ -63,7 +60,6 @@ const deleteUserFromDb = async (userId: string) => {
 
   // Delete the user using deleteOne
   const result = await User.deleteOne({ _id: userId });
-  console.log(result);
 
   return result;
 };

@@ -71,7 +71,7 @@ userSchema.post("save", function (doc, next) {
 //  check is user exist
 
 userSchema.statics.isUserExist = async function (id: string) {
-  return await User.findOne({ id }).select("+password");
+  return await User.findOne({ _id: id }).select("+password");
 };
 
 userSchema.virtual("totalFollowers").get(function () {

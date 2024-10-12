@@ -62,7 +62,6 @@ export const getFollowingStatus = async (
 
   const currentUser = await User.findById(currentUserObjectId);
   const targetUser = await User.findById(targetUserObjectId);
-  console.log(currentUser, targetUser, "target");
 
   if (!currentUser || !targetUser) {
     throw new AppError(404, "User not found");
@@ -164,6 +163,9 @@ const toggleVoteRecipe = async (
 
   return result.length > 0 ? result[0] : { upvoteCount: 0, downvoteCount: 0 };
 };
+
+
+
 
 export const ActivityServices = {
   followUserIntoDb,

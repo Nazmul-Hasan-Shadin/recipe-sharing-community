@@ -29,7 +29,6 @@ const myRecipeFromDb = async (userId: string) => {
 };
 
 const getSingleRecipeFromDb = async (recipeId: string) => {
-  console.log(recipeId, "insride reecipve services");
 
   const result = await Recipe.findById(recipeId);
 
@@ -120,7 +119,6 @@ const createCommentForRecipe = async (comments: {
   recipeId: string;
   content: string;
 }) => {
-  console.log(comments, "iam comments");
   const result = await Comment.create(comments);
 
   return result;
@@ -131,15 +129,30 @@ const getAllCommentForSpecificRecipe = async (recipeId: string) => {
     recipeId,
   }).populate("userId");
 
-  console.log(result, "iam result");
+
 
   return result;
 };
 
-const deleteCommentFromDB = async (recipeId: string) => {
-  const result = await Comment.deleteOne({ recipeId: recipeId });
+const deleteCommentFromDB = async (commentId: string) => {
+
+  const result = await Comment.deleteOne({ _id: commentId });
 
   return result;
+};
+
+export const updateComment = async (commentId: string, content: string) => {
+  const updatedComment = await Comment.findByIdAndUpdate(
+    commentId,
+    { content },
+    { new: true, runValidators: true }
+  );
+
+  if (!updatedComment) {
+    throw new Error("Comment not found."); // Custom error handling
+  }
+
+  return updatedComment;
 };
 
 export const RecipeServices = {
@@ -154,4 +167,5 @@ export const RecipeServices = {
   updateRecipeInDb,
   updateRecipePublishStatusIntoDb,
   addOrUpdateRating,
+  updateComment
 };

@@ -3,12 +3,7 @@ import sendResponse from "../../../utils/sendResponse";
 import { UserServices } from "./user.services";
 
 const createUser = catchAsync(async (req, res) => {
-  console.log(req.body, "body and hit");
 
-  console.log(req.body.data);
-  console.log(req.file, "Received file");
-
-  console.log(JSON.parse(req.body.data));
 
   const result = await UserServices.createUserIntoDb({
     ...JSON.parse(req.body.data),
@@ -38,9 +33,6 @@ const updateUser = catchAsync(async (req, res) => {
 });
 
 const getSingleUser = catchAsync(async (req, res) => {
-  console.log("iam hit");
-
-  console.log(req.params);
 
   const userId = req.params.userId;
 

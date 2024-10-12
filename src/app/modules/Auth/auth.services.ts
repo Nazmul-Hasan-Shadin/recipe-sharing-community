@@ -9,7 +9,6 @@ const loginUserIntoDb = async (userInfo: TLoginUser) => {
   const { email, password } = userInfo;
 
   const user = await User.findOne({ email });
-  console.log(user, "logged ind");
 
   if (!user) {
     throw new AppError(404, "user not found");
@@ -57,7 +56,11 @@ const changePassword = async (
   userData: JwtPayload,
   payload: { newPassword: string; oldPassword: string }
 ) => {
-  const user = await User.isUserExist(userData.id);
+  console.log(userData, "iam userData");
+
+  const user = await User.isUserExist(userData.userId);
+
+  console.log("iam inside service", user);
 
   if (!user) {
     throw new AppError(404, "user not found");
@@ -77,8 +80,6 @@ const changePassword = async (
     Number(config.bcrypt_salt)
   );
 
-  console.log(newHashedPassword, "iam hsashed paas");
-
   const result = await User.findOneAndUpdate(
     {
       _id: userData.userId,
@@ -94,8 +95,11 @@ const changePassword = async (
   return result;
 };
 
-const forgetPassword = async (id: string) => {
-  const user = await User.isUserExist(id);
+const forgetPassword = async (email: string) => {
+  // const user = await User.isUserExist(id);
+
+  const user = await User.findOne({ email: email });
+  console.log(user, "iam user");
 
   const userStatus = user?.status;
 
@@ -125,17 +129,20 @@ const forgetPassword = async (id: string) => {
   const resetUILink = `${config.reset_ui_pass_link}?id=${user._id}&token=${resetToken}`;
   console.log(resetUILink);
 
-  sendEmail(user?.email, resetUILink);
+  sendEmail(user?.email, resetUILink)
+    .then(() => console.log("Email sent successfully"))
+    .catch((error) => console.error("Error sending email:", error));
 };
 
 const resetPasswordIntoDb = async (
-  payload: { id: string; newPassword: string },
+  payload: { userId: string; newPassword: string; token: string },
   token: string
 ) => {
-  console.log(payload.id);
+  // const user = await User.isUserExist(payload.id);
+  console.log(payload.userId);
 
-  const user = await User.isUserExist(payload.id);
-  console.log(user);
+  const user = await User.findById(payload.userId);
+  console.log(user, "iam user");
 
   if (!user) {
     throw new AppError(404, "This user is not found ");
@@ -145,9 +152,8 @@ const resetPasswordIntoDb = async (
     token,
     config.jwt_access_token_secret as string
   ) as JwtPayload;
-  console.log("decoded id", decoded.userId);
 
-  if (payload.id !== decoded.userId) {
+  if (payload.userId !== decoded.userId) {
     throw new AppError(401, "Your are forbidden");
   }
 
@@ -157,15 +163,14 @@ const resetPasswordIntoDb = async (
   );
   const result = await User.findOneAndUpdate(
     {
-      id: decoded.userId,
-      role: decoded.role,
+      _id: decoded.userId,
     },
     {
       password: newHashedPassword,
-
-      passwordChangeAt: new Date(),
     }
   );
+
+  return result;
 };
 
 export const AuthServices = {

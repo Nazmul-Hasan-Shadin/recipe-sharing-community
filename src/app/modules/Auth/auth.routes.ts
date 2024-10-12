@@ -11,12 +11,12 @@ router.post(
   auth("user", "admin"),
   AuthController.changePassword
 );
-router.post(
-  "/reset-passwor",
-  auth("user", "admin"),
+router.patch(
+  "/reset-password",
+
   AuthController.resetPassword
 );
 
-router.post('/forget-password',auth('user'),AuthController.forgetPassword)
+router.post("/forget-password", AuthController.forgetPassword);
 
 export const AuthRoutes = router;

@@ -29,6 +29,8 @@ const changePassword = catchAsync(async (req, res) => {
   const payload = req.body;
   const userData = req.user;
 
+  console.log(payload, userData);
+
   const result = await AuthServices.changePassword(userData, payload);
 
   sendResponse(res, {
@@ -40,7 +42,10 @@ const changePassword = catchAsync(async (req, res) => {
 });
 
 const forgetPassword = catchAsync(async (req, res) => {
-  const result = await AuthServices.forgetPassword(req.user.userId);
+   
+  const result = await AuthServices.forgetPassword(req.body.email);
+  console.log(result);
+  
 
   sendResponse(res, {
     statusCode: 200,
@@ -51,7 +56,7 @@ const forgetPassword = catchAsync(async (req, res) => {
 });
 
 const resetPassword = catchAsync(async (req, res) => {
-  const token = req.headers.authorization;
+  const token = req.body.token;
   const result = await AuthServices.resetPasswordIntoDb(
     req.body,
     token as string

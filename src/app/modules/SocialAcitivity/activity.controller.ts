@@ -7,8 +7,7 @@ const followUser = catchAsync(async (req, res) => {
     id: req.user.userId,
     targetId: req.params.id,
   };
-  console.log("iam hit", req.params.id);
-  console.log(req.body, "iam bdoy bro");
+
 
   const result = await ActivityServices.followUserIntoDb(userInfo);
 
@@ -23,7 +22,6 @@ const followingStatus = catchAsync(async (req, res) => {
   const userId = req.params.id;
   const currentUserId = req.user.userId;
 
-  console.log(userId, currentUserId, "insid folloiwng status");
 
   const result = await ActivityServices.getFollowingStatus(
     currentUserId,
@@ -38,7 +36,6 @@ const followingStatus = catchAsync(async (req, res) => {
 });
 
 export const upvoteRecipeController = catchAsync(async (req, res) => {
-  console.log("iam hit");
 
   const { recipeId: optionalid, type } = req.body;
 
